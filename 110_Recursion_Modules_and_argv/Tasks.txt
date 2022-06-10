@@ -1,0 +1,32 @@
+ex1:
+
+Modify the script to work with long words. We require that it prints approx.
+20 randomly chosen permutations of the input word. 
+It is important that the printed permutations are chosen at random, 
+but it is not important to print exactly 20 each time. 
+(Hint: import math, random. You are allowed to use global variables!) 
+
+ex2:
+
+Now let’s read from standard input and count words and introduce the dictionary type - dict. 
+A dictionary is a collection which is unordered, changeable and indexed. 
+In Python dictionaries are written with curly brackets, 
+and they have keys and values. More on this in chapter 115. 
+
+ 
+ (ex2_original)
+ 
+
+The standard input stream (sys.stdin) is iterable, 
+line by line, so it can be used in a for statement. 
+The findall function from the re module produces the list of tokens on the line matching a pattern. 
+We accumulate counts for each word in a dictionary. 
+The dictionary lookup method get accepts a “default” value to return in case of a missing key (here 0), 
+which makes counting quite elegant. 
+You may also notice that Python makes iterating the pairs of a dictionary in sorted order quite easy. 
+
+ 
+
+Read about pylint and configure it so that it becomes an integral part of your development routine. 
+Alternative linters are also available and it is largely a matter of choice (or corporate standards) which one you use, 
+but for now let's stick with pylint. 

@@ -1,0 +1,1 @@
+Modify the program so that it also prints the count of the Pythagorean triples at the end. From now on, send the solutions of each task to your trainer, as soon as it is finished. This will, sort of, enable him to track your progress. 
