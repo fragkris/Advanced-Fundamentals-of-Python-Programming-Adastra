@@ -1,0 +1,25 @@
+10F
+THis is not valid 5 F
+-10C
+26F
+34F
+Not valid as well 7  8 9 C
+100F
+26C
+29C
+Invalid string 56 F C
+2C
+1700cc
+22F
+42C
+This can also be a line with invalid 21F degrees
+
+Invalid numbers 123
+At 0C degrees the water freezes
+Lowercase letters are also very cool letters. -2c cool.
+I don't even know how much celsius is 0f
+1F should be valid
+2F
+
+
+1C
