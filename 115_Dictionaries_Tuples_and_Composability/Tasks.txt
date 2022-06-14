@@ -1,0 +1,23 @@
+PROGRAMMING EXERCISE 
+
+ 
+
+1. Use the finnhub.io websockets API to retrieve in real-time data the bitcoin price from the Binance exchange.
+You'll need to following symbol: 
+BINANCE:BTCUSDT. The payload is json, so use the json module in Python to transform the message to dict. 
+
+ 
+
+Your class should have the option to output in the console all relevant trades in the following format: 
+
+
+"2020-03-05 09:08:41 price:8921.06 volume:0.051236"
+ 
+
+ 
+
+2. Implement a data structure which calculates time averages.
+For each one minute period (e.g. 10:00-10:01, 10:01-10:02, etc.) 
+calculate the volume-weighted average price of trades made during this minute. 
+Keep in mind that there may be late-arriving data, 
+and the messages you receive are not guaranteed to be ordered. 
