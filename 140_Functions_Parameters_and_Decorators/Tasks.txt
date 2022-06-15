@@ -1,0 +1,19 @@
+PROGRAMMING EXERCISE 
+
+- Write a function which takes any number of parameters and returns their average.
+            (ex1_kris.py)
+
+- Write a function to calculate Lucas numbers using the naïve recursion.
+Lucas numbers are very similar to Fibonacci numbers and are defined by L(0)=2, L(1)=1 and L(n)=L(n-1)+L(n-2)
+            (ex2_kris.py)
+
+- Use a timing decorator to log how long each call.
+How long does it take to calculate L(35)? What about L(100)?
+            (ex2_kris.py) (row 11 to 24)
+
+- Now add a memoize decorator. Can you calculate L(100) now?
+            (ex2_kris.py) (row 28 - need to be uncommented)
+
+- Write a function which does prime factorization of a number, e.g. 20633239 = 11*29*71*911.
+Calculate the prime factorization of L(60) and L(61).
+            (ex3_kris.py)
