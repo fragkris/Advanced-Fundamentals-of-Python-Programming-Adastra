@@ -15,7 +15,7 @@ class timer(object):
 
     def __call__(self, *args):
         if self.active:
-             return self.f(*args)
+            return self.f(*args)
         start = time.time()
         self.active = True
         res = self.f(*args)
@@ -25,14 +25,15 @@ class timer(object):
 
 
 @timer
-#@memoize #Caches values in order to save iterations and make function faster
+# @memoize #Caches values in order to save iterations and make function faster
 def lucas(n):
     if n == 0:
         return 2
     elif n == 1:
         return 1
     else:
-        return int(lucas(n-1) + lucas(n-2))
+        return int(lucas(n - 1) + lucas(n - 2))
+
 
 """
 Another way for Lucas numbers. Works much faster.

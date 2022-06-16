@@ -3,17 +3,15 @@
 - Task 2 Partly running. The formula should be fixed and late data should be considered. TODO
 """
 
-
-import finnhub
 import json
 import websocket
 from datetime import datetime
 
-total_price = 0
-total_volume = 0
+TOTAL_PRICE = 0
+TOTAL_VOLUME = 0
 
 
-def edit_message(message): #TODO can be optimized so it would only edit data but not print
+def edit_message(message):  # TODO can be optimized so it would only edit data but not print
     for line in json.loads(message)['data']:
         price = line['p']
         volume = line['v']
@@ -25,20 +23,21 @@ def edit_message(message): #TODO can be optimized so it would only edit data but
 
 
 def calculate_vwap(p, v):
-    global total_price
-    global total_volume
+    global TOTAL_PRICE
+    global TOTAL_VOLUME
 
-    total_price += p
-    total_volume += v
+    TOTAL_PRICE += p
+    TOTAL_VOLUME += v
 
 
 def print_vwap():
-    global total_price
-    global total_volume
+    global TOTAL_PRICE
+    global TOTAL_VOLUME
 
-    print("Volume-weighted average price:", (total_price * total_volume)) #TODO Fix the formula
-    total_price = 0
-    total_volume = 0
+    print("Volume-weighted average price:", (TOTAL_PRICE * TOTAL_VOLUME))  # TODO Fix the formula
+    TOTAL_PRICE = 0
+    TOTAL_VOLUME = 0
+
 
 def on_message(ws, message):
     edit_message(message)
@@ -47,7 +46,7 @@ def on_message(ws, message):
         time = datetime.utcfromtimestamp(data['t'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
         secs = str(time[-2:])
 
-        if int(secs) == 00: #TODO consider late data
+        if int(secs) == 00:  # TODO consider late data
             print_vwap()
 
 
@@ -66,4 +65,3 @@ if __name__ == "__main__":
                                 on_close=on_close)
     ws.on_open = on_open
     ws.run_forever()
-
