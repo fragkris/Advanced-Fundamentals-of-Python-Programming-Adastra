@@ -1,3 +1,8 @@
+"""
+The code draws cards from the deck and prints them with their total value.
+"""
+
+
 import random
 from enum import Enum
 from typing import Callable, Iterable, cast
@@ -26,20 +31,20 @@ class AceCard(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__("A", suit, 1, 11)
-
+#       ^ Introduce Ace card and its hard and soft values
 
 class FaceCard(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         rank_str = {11: "J", 12: "Q", 13: "K"}[rank]
         super().__init__(rank_str, suit, 10, 10)\
-
+#       ^ Introduce Face card and its hard and soft values
 
 class NumberCard(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__(str(rank), suit, rank, rank)
-
+#       ^ Introduce Number card and its hard and soft values
 
 def card_return(rank: int, suit: Suit) -> BlackJackCard:
     if rank == 1:
@@ -48,19 +53,16 @@ def card_return(rank: int, suit: Suit) -> BlackJackCard:
         return NumberCard(rank, suit)
     elif 11 <= rank < 14:
         return FaceCard(rank, suit)
-
+#       ^ Returns a card
 
 
 class Deck(list):
     def __init__(
-            self, decks: int = 6, factory: Callable[[int, Suit], BlackJackCard] = card_return) -> None:
+            self, factory: Callable[[int, Suit], BlackJackCard] = card_return) -> None:
         super().__init__()
-        for i in range(decks):
+        for i in range(random.randint(1, 6)):
             self.extend(factory(r + 1, s) for r in range(13) for s in cast(Iterable[Suit], Suit))
         random.shuffle(self)
-        burn = random.randint(1, 52)
-        for i in range(burn):
-            self.pop()
 
 
 class Hand:
