@@ -22,20 +22,20 @@ class BlackJackCard:
         return f"{self.rank}{self.suit}"
 
 
-class Ace_Card(BlackJackCard):
+class AceCard(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__("A", suit, 1, 11)
 
 
-class Face_Card(BlackJackCard):
+class FaceCard(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         rank_str = {11: "J", 12: "Q", 13: "K"}[rank]
         super().__init__(rank_str, suit, 10, 10)\
 
 
-class Number_Card(BlackJackCard):
+class NumberCard(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__(str(rank), suit, rank, rank)
@@ -43,11 +43,11 @@ class Number_Card(BlackJackCard):
 
 def card_return(rank: int, suit: Suit) -> BlackJackCard:
     if rank == 1:
-        return Ace_Card(rank, suit)
+        return AceCard(rank, suit)
     elif 2 <= rank < 11:
-        return Number_Card(rank, suit)
+        return NumberCard(rank, suit)
     elif 11 <= rank < 14:
-        return Face_Card(rank, suit)
+        return FaceCard(rank, suit)
 
 
 
