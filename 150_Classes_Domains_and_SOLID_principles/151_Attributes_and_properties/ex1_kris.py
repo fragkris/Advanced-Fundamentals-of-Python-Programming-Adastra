@@ -1,7 +1,7 @@
 """
 The code draws cards from the deck and prints them with their total value.
+I tried not to change the given code in the example.
 """
-
 
 import random
 from enum import Enum
@@ -31,19 +31,24 @@ class AceCard(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__("A", suit, 1, 11)
+
+
 #       ^ Introduce Ace card and its hard and soft values
 
 class FaceCard(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         rank_str = {11: "J", 12: "Q", 13: "K"}[rank]
-        super().__init__(rank_str, suit, 10, 10)\
-#       ^ Introduce Face card and its hard and soft values
+        super().__init__(rank_str, suit, 10, 10) \
+            #       ^ Introduce Face card and its hard and soft values
+
 
 class NumberCard(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__(str(rank), suit, rank, rank)
+
+
 #       ^ Introduce Number card and its hard and soft values
 
 def card_return(rank: int, suit: Suit) -> BlackJackCard:
@@ -53,6 +58,8 @@ def card_return(rank: int, suit: Suit) -> BlackJackCard:
         return NumberCard(rank, suit)
     elif 11 <= rank < 14:
         return FaceCard(rank, suit)
+
+
 #       ^ Returns a card
 
 
@@ -69,7 +76,7 @@ class Hand:
     def __init__(
             self,
             dealer_card: BlackJackCard,
-            *cards: BlackJackCard ) -> None:
+            *cards: BlackJackCard) -> None:
         self.dealer_card: BlackJackCard = dealer_card
         self._cards = list(cards)
 
