@@ -1,10 +1,9 @@
 import random
 from enum import Enum
-from typing import Optional, Callable, Iterable, cast
+from typing import Callable, Iterable, cast
 
 
 class BlackJackCard:
-    __slots__ = ("rank", "suit", "hard", "soft")
 
     def __init__(self, rank: str, suit: "Suit", hard: int, soft: int) -> None:
         self.rank = rank
@@ -27,7 +26,6 @@ class Suit(str, Enum):
 
 
 class Ace21Card(BlackJackCard):
-    __slots__ = ("rank", "suit", "hard", "soft")
 
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__("A", suit, 1, 11)
@@ -49,8 +47,6 @@ class Face21Card(BlackJackCard):
 
 
 class Number21Card(BlackJackCard):
-    __slots__ = ("rank", "suit", "hard", "soft")
-
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__(str(rank), suit, rank, rank)
 
@@ -70,7 +66,6 @@ def card21(rank: int, suit: Suit) -> BlackJackCard:
 
 
 class Deck(list):
-
     def __init__(
             self, decks: int = 6, factory: Callable[[int, Suit], BlackJackCard] = card21) -> None:
         super().__init__()
