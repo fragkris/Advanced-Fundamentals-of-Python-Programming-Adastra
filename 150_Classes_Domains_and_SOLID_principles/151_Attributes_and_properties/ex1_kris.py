@@ -78,7 +78,6 @@ class Deck(list):
 
 
 class Hand:
-
     def __init__(
             self,
             dealer_card: BlackJackCard,
@@ -87,18 +86,17 @@ class Hand:
         self._cards = list(cards)
 
     def __str__(self) -> str:
-        return ", ".join(map(str, self.card))
+        return ", ".join(map(str, self._cards))
 
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}"
             f"({self.dealer_card!r}, "
-            f"{', '.join(map(repr, self.card))})"
+            f"{', '.join(map(repr, self._cards))})"
         )
 
 
 class Hand_Lazy(Hand):
-
     @property
     def total(self) -> int:
         delta_soft = max(c.soft - c.hard for c in self._cards)
