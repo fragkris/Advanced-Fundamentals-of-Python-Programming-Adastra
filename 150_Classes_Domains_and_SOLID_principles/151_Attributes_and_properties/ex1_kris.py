@@ -3,21 +3,6 @@ from enum import Enum
 from typing import Callable, Iterable, cast
 
 
-class BlackJackCard:
-
-    def __init__(self, rank: str, suit: "Suit", hard: int, soft: int) -> None:
-        self.rank = rank
-        self.suit = suit
-        self.hard = hard
-        self.soft = soft
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(rank={self.rank}, suit={self.suit!r}, hard={self.hard}, soft={self.soft}"
-
-    def __str__(self) -> str:
-        return f"{self.rank}{self.suit}"
-
-
 class Suit(str, Enum):
     Club = "♣"
     Diamond = "♦"
@@ -25,49 +10,50 @@ class Suit(str, Enum):
     Spade = "♠"
 
 
-class Ace21Card(BlackJackCard):
+class BlackJackCard:
+
+    def __init__(self, rank: str, suit: Suit, hard: int, soft: int) -> None:
+        self.rank = rank
+        self.suit = suit
+        self.hard = hard
+        self.soft = soft
+
+    def __str__(self) -> str:
+        return f"{self.rank}{self.suit}"
+
+
+class Ace_Card(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__("A", suit, 1, 11)
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(rank=1, suit={self.suit!r})"
 
-
-class Face21Card(BlackJackCard):
-    __slots__ = ("rank", "suit", "hard", "soft")
+class Face_Card(BlackJackCard):
 
     def __init__(self, rank: int, suit: Suit) -> None:
         rank_str = {11: "J", 12: "Q", 13: "K"}[rank]
-        super().__init__(rank_str, suit, 10, 10)
-
-    def __repr__(self) -> str:
-        rank_num = {"J": 11, "Q": 12, "K": 13}[self.rank]
-        return f"{self.__class__.__name__}(rank={rank_num}, suit={self.suit!r})"
+        super().__init__(rank_str, suit, 10, 10)\
 
 
-class Number21Card(BlackJackCard):
+class Number_Card(BlackJackCard):
+
     def __init__(self, rank: int, suit: Suit) -> None:
         super().__init__(str(rank), suit, rank, rank)
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(rank={self.rank}, suit={self.suit!r})"
 
-
-def card21(rank: int, suit: Suit) -> BlackJackCard:
+def card_return(rank: int, suit: Suit) -> BlackJackCard:
     if rank == 1:
-        return Ace21Card(rank, suit)
+        return Ace_Card(rank, suit)
     elif 2 <= rank < 11:
-        return Number21Card(rank, suit)
+        return Number_Card(rank, suit)
     elif 11 <= rank < 14:
-        return Face21Card(rank, suit)
-    else:
-        raise TypeError
+        return Face_Card(rank, suit)
+
 
 
 class Deck(list):
     def __init__(
-            self, decks: int = 6, factory: Callable[[int, Suit], BlackJackCard] = card21) -> None:
+            self, decks: int = 6, factory: Callable[[int, Suit], BlackJackCard] = card_return) -> None:
         super().__init__()
         for i in range(decks):
             self.extend(factory(r + 1, s) for r in range(13) for s in cast(Iterable[Suit], Suit))
