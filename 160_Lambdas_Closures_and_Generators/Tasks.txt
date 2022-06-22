@@ -1,0 +1,7 @@
+Create a lambda which returns the first item in a list.
+        ^ ex1_kris.py
+
+Map a lambda which applies the logistic function to the list [-3, -5, 1, 4] .
+Round each number to 4 decimal places. (ermm…. that's two nested maps)
+        ^ ex2_kris.py
+
