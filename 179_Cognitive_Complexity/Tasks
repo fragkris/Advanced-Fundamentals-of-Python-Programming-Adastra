@@ -1,0 +1,8 @@
+Exercise
+
+Here is some code. You are asked to:
+^(ex1_original.py)
+Calculate the cognitive complexity of the function. (Calculated in ex1_original.py and is equal to 30)
+Understand what it does.
+Refactor the code into several functions or class methods to bring down the cognitive complexity.
+^(ex1_kris.py) (The new cognitive complexity is 9)
