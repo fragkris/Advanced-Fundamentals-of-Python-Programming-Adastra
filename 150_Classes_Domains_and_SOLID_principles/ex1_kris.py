@@ -84,5 +84,5 @@ class Sink:
 
 
 se = Source("streaming") #or "<path-to-file>
-ETL().source(se).sink("postgres", se.rtrn()).run()
-                        #^ OR "streaming"
+ETL().source(se).sink("console", se.rtrn()).run()
+                        #^ OR "postgres"
