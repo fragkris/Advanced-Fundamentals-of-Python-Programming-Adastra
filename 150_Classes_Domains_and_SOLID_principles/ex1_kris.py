@@ -11,7 +11,7 @@ The source has two options(<path-to-file> or file name) or ('streaming').
 The sink also has two options ('console') or ('postgres'). The sink also takes the return values from Source as *args.
 """
 
-
+import asyncio
 import json
 import string
 import random
@@ -45,6 +45,7 @@ class Source:
                 my_dict = {'key': random.choice(string.ascii_uppercase) + str(random.randint(100, 200)),
                             'value': str(round(random.randint(10, 40) / random.uniform(0.1, 1), 1)),
                             'ts': str(self._fake.date_time())}
+
                 yield my_dict
         else:
             print("You should either enter a valid directory or the word 'streaming'. Try again.")
