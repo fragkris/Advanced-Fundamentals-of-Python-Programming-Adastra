@@ -11,7 +11,7 @@ The source has two options(<path-to-file> or file name) or ('streaming'). If you
 double press 'Esc' key to stop the program.
 The sink also has two options ('console') or ('postgres'). The sink also takes the return values from Source as *args.
 """
-
+import collections
 import json
 import string
 import random
@@ -29,14 +29,14 @@ class ETL:
 
 
 class Source:
-    def __init__(self, *args):
+    def __init__(self, source_type: str) -> None:
         self._fake = Faker('en_US')
-        self.args = args
+        self.source_type = source_type
         self.sink = Sink
 
-    def rtrn(self):
-        if ".json" in self.args[0]:
-            with open(self.args[0]) as json_file:
+    def get_data(self):
+        if ".json" in self.source_type:
+            with open(self.source_type) as json_file:
                 a = json.load(json_file)
                 if type(a) is dict:  # If it is a dictionary eg.({key:value, value:value, ts:value}), returns it directly
                     yield a
@@ -45,14 +45,14 @@ class Source:
                         yield i
 
 
-        elif 'streaming' == self.args[0]:
+        elif 'streaming' == self.source_type:
 
             while True:
                 try:
                     time.sleep(0.5)
                     my_dict = {'key': random.choice(string.ascii_uppercase) + str(random.randint(100, 200)),
-                                'value': str(round(random.randint(10, 40) / random.uniform(0.1, 1), 1)),
-                                'ts': str(self._fake.date_time())}
+                               'value': str(round(random.randint(10, 40) / random.uniform(0.1, 1), 1)),
+                               'ts': str(self._fake.date_time())}
 
                     yield my_dict
                     if keyboard.is_pressed('Esc'):
@@ -67,20 +67,21 @@ class Source:
 
 
 class Sink:
-    def __init__(self, *args):
+    def __init__(self, sink_type: str, data) -> None:
         self._connection = psycopg2.connect(host='localhost',
                                             port='8000',
                                             database='test_db',
                                             user='postgres',
                                             password='940325')
         self._cursor = self._connection.cursor()
-        self.args = args
+        self.sink_type = sink_type
+        self.data = data
 
     def run(self):
-        if 'console' == self.args[0]:
-            for line in self.args[1]:
+        if 'console' == self.sink_type:
+            for line in self.data:
                 print(line)
-        elif 'postgres' == self.args[0]:
+        elif 'postgres' == self.sink_type:
 
             self._cursor.execute("SELECT version();")
             create_table_query = '''CREATE TABLE IF NOT EXISTS test_table           
@@ -89,16 +90,17 @@ class Sink:
                       TimeStamp TEXT NOT NULL); '''
             self._cursor.execute(create_table_query)
             #           ^ Creates the table if it doesn't exist with TEXT columns for simplicity
-            for line in self.args[1]:
+            for line in self.data:
                 insert_query = "INSERT INTO test_table (key, value, timestamp) VALUES ('{}', '{}', '{}')" \
                     .format(line['key'], line['value'], line['ts'])
                 self._cursor.execute(insert_query)
                 self._connection.commit()
 
 
-#           ^ Insert the values in the created table
+#           ↑ Insert the values in the created table
 
 
-se = Source("streaming")  # or "<path-to-file>
-ETL().source(se).sink("console", se.rtrn()).run()
-# ^ OR "postgres"
+se = Source("streaming")
+#               ↑ or "<path-to-file>"
+ETL().source(se.source_type).sink("console", se.get_data()).run()
+#                                    ↑ OR "postgres"
