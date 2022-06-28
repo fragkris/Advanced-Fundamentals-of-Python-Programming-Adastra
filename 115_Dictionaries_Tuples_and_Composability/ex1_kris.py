@@ -1,8 +1,8 @@
 """
 - Task 1 completed and running properly.
-- Task 2 Partly running. The formula should be fixed and late data should be considered. TODO
+- Task 2 Partly running. Late data should be considered. TODO
 """
-
+import numpy as np
 import json
 import websocket
 from datetime import datetime
@@ -34,7 +34,7 @@ def print_vwap():
     global TOTAL_PRICE
     global TOTAL_VOLUME
 
-    print("Volume-weighted average price:", (TOTAL_PRICE * TOTAL_VOLUME))  # TODO Fix the formula
+    print("Volume-weighted average price:", np.cumsum(TOTAL_PRICE * TOTAL_VOLUME) / np.cumsum(TOTAL_PRICE))
     TOTAL_PRICE = 0
     TOTAL_VOLUME = 0
 
