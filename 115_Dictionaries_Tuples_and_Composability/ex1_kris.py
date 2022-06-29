@@ -32,7 +32,7 @@ class StreamPricesAndVWAP:
                 print_out = self._values_dict.pop(prev_key)
                 result = self.calculate_vwap(print_out['p'], print_out['v'], print_out['c'])
                 print("-----------------------------------------------------")
-                print(f"The VWAP for the previous minute period is: {result}")
+                print(f" The VWAP for the previous minute period is: {result} ")
                 print("-----------------------------------------------------")
                 self._start_time = datetime.now()
 
