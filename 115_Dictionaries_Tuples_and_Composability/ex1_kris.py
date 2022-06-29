@@ -6,8 +6,6 @@ It is possible that the program collects and never deletes some late data, if It
 However, this is very unlikely in this scenario.
 Since the program is mostly for demonstration, I didn't bother implementing a cleaning code for
 unused information.
-
-
 """
 
 import websocket
