@@ -1,13 +1,25 @@
+"""
+The program streams bitcoin price in real time. Few seconds after every minute passed, the
+program calculates and prints VWAP for the previous minute.
+It is possible that the program collects and never deletes some late data, if It arrives after the given
+1.2 minutes.
+However, this is very unlikely in this scenario.
+Since the program is mostly for demonstration, I didn't bother implementing a cleaning code for
+unused information.
+
+
+"""
+
 import websocket
 import json
 from datetime import datetime, timedelta
 
 
-class VWAP:
+class StreamPricesAndVWAP:
 
     def __init__(self):
-        self.values_dict = {}
-        self.start_time = datetime.now()
+        self._values_dict = {}
+        self._start_time = datetime.now()
 
     def parse_message(self, message):
         for line in json.loads(message)['data']:
@@ -15,16 +27,16 @@ class VWAP:
             volume = line['v']
             date = str(datetime.fromtimestamp(line['t'] / 1000).strftime('%Y-%m-%d %H:%M:%S'))
             dict_key = str(datetime.fromtimestamp(line['t'] / 1000).strftime('%Y-%m-%d %H:%M'))
-            self.add_to_dict(self.values_dict, dict_key, price, volume)
+            self.add_to_dict(self._values_dict, dict_key, price, volume)
 
-            if datetime.now() - self.start_time >= timedelta(minutes=1.2):
-                prev_key = str(self.start_time.strftime('%Y-%m-%d %H:%M'))
-                print_out = self.values_dict.pop(prev_key)
+            if datetime.now() - self._start_time >= timedelta(minutes=1.2):
+                prev_key = str(self._start_time.strftime('%Y-%m-%d %H:%M'))
+                print_out = self._values_dict.pop(prev_key)
                 result = self.calculate_vwap(print_out['p'], print_out['v'], print_out['c'])
                 print("-----------------------------------------------------")
                 print(f"The VWAP for the previous minute period is: {result}")
                 print("-----------------------------------------------------")
-                start_time = datetime.now()
+                self._start_time = datetime.now()
 
             return "{}, price: {}, volume: {}".format(date, price, volume)
 
@@ -57,6 +69,6 @@ class VWAP:
         ws.run_forever()
 
 
-vwap = VWAP()
+spav = StreamPricesAndVWAP()
 if __name__ == "__main__":
-    vwap.run()
+    spav.run()
