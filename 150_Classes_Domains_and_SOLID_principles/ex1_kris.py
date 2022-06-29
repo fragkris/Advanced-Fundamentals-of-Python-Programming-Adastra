@@ -89,15 +89,14 @@ class Sink:
                       VALUE TEXT NOT NULL,
                       TimeStamp TEXT NOT NULL); '''
             self._cursor.execute(create_table_query)
-            #           ^ Creates the table if it doesn't exist with TEXT columns for simplicity
+#                       ↑ Creates the table if it doesn't exist with TEXT columns for simplicity
             for line in self.data:
                 insert_query = "INSERT INTO test_table (key, value, timestamp) VALUES ('{}', '{}', '{}')" \
                     .format(line['key'], line['value'], line['ts'])
                 self._cursor.execute(insert_query)
                 self._connection.commit()
 
-
-#           ↑ Insert the values in the created table
+#                           ↑ Insert the values in the created table
 
 
 se = Source("streaming")
