@@ -1,3 +1,12 @@
 Your task in this final chapter is to prepare a python programming task based on the additional
 readings that you did. The task should not be too complex, but instead should be doable in 3-4 hours.
 Submit the task AND your solution.
+
+
+What is the job of the data scientist without music and diagrams?
+Your task is to create a circular diagram, representing the
+music you are listening to.
+- Use the Spotify api to connect to your account.
+- Understand how to retrieve your client id and client secret from Spotify's developer's webpage.
+- Select a playlist from your library and analyze it.
+- Use MatplotLib to create a visual diagram of the selected playlist.

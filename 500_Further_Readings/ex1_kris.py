@@ -1,128 +1,110 @@
-from tkinter import *
+"""
+The program receives client_id, client_secret and playlist_id and creates a circular diagram
+representing the statistics of the music you are listening to.
 
-win = Tk()  # This is to create a basic window
-win.geometry("312x324")  # this is for the size of the window 
-win.resizable(0, 0)  # this is to prevent from resizing the window
-win.title("Calculator")
+"""
 
+import spotipy
+import pandas as pd
+from spotipy.oauth2 import SpotifyClientCredentials
+from sklearn.preprocessing import MinMaxScaler
+import matplotlib.pyplot as plt
+import math
 
-###################Starting with functions ####################
-# 'btn_click' function : 
-# This Function continuously updates the 
-# input field whenever you enter a number
+client_id = '6386b9851ba1422d986d0679664b823e'  # insert your client id
+client_secret = '4082e30c07924dd68dc284dec52c3e4a'  # insert your client secret id here
 
-def btn_click(item):
-    global expression
-    expression = expression + str(item)
-    input_text.set(expression)
+client_credentials_manager = SpotifyClientCredentials(client_id, client_secret)
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
+playlist_id = 'spotify:playlist:37i9dQZEVXcVCRUrQ42Ej9'  # insert your playlist id
+results = sp.playlist(playlist_id)
 
-# 'bt_clear' function :This is used to clear
-# the input field
+# create a list of song ids
+ids = []
 
-def bt_clear():
-    global expression
-    expression = ""
-    input_text.set("")
+for item in results['tracks']['items']:
+    track = item['track']['id']
+    ids.append(track)
 
+song_meta = {'id': [], 'album': [], 'name': [],
+             'artist': [], 'explicit': [], 'popularity': []}
 
-# 'bt_equal':This method calculates the expression
-# present in input field
+for song_id in ids:
+    # get song's meta data
+    meta = sp.track(song_id)
 
-def bt_equal():
-    global expression
-    result = str(eval(expression))  # 'eval':This function is used to evaluates the string expression directly
-    input_text.set(result)
-    expression = ""
+    # song id
+    song_meta['id'].append(song_id)
 
+    # album name
+    album = meta['album']['name']
+    song_meta['album'] += [album]
 
-expression = ""
+    # song name
+    song = meta['name']
+    song_meta['name'] += [song]
 
-# 'StringVar()' :It is used to get the instance of input field
+    # artists name
+    s = ', '
+    artist = s.join([singer_name['name'] for singer_name in meta['artists']])
+    song_meta['artist'] += [artist]
 
-input_text = StringVar()
+    # explicit: lyrics could be considered offensive or unsuitable for children
+    explicit = meta['explicit']
+    song_meta['explicit'].append(explicit)
 
-# Let us creating a frame for the input field
+    # song popularity
+    popularity = meta['popularity']
+    song_meta['popularity'].append(popularity)
 
-input_frame = Frame(win, width=312, height=50, bd=0, highlightbackground="black", highlightcolor="black",
-                    highlightthickness=2)
+song_meta_df = pd.DataFrame.from_dict(song_meta)
 
-input_frame.pack(side=TOP)
+# check the song feature
+features = sp.audio_features(song_meta['id'])
+# change dictionary to dataframe
+features_df = pd.DataFrame.from_dict(features)
 
-# Let us create a input field inside the 'Frame'
+# convert milliseconds to mins
+# duration_ms: The duration of the track in milliseconds.
+# 1 minute = 60 seconds = 60 × 1000 milliseconds = 60,000 ms
+features_df['duration_ms'] = features_df['duration_ms'] / 60000
 
-input_field = Entry(input_frame, font=('arial', 18, 'bold'), textvariable=input_text, width=50, bg="#eee", bd=0,
-                    justify=RIGHT)
+# combine two dataframe
+final_df = song_meta_df.merge(features_df)
+# print(final_df)
 
-input_field.grid(row=0, column=0)
+music_feature = features_df[['danceability', 'energy', 'loudness', 'speechiness', 'tempo', 'duration_ms']]
 
-input_field.pack(ipady=10)  # 'ipady' is internal padding to increase the height of input field
+# Normalization - transfrom values in the range 0-1
+min_max_scaler = MinMaxScaler()
+music_feature.loc[:] = min_max_scaler.fit_transform(music_feature.loc[:])
 
-# Let us creating another 'Frame' for the button below the 'input_frame'
+# plot size
+fig = plt.figure(figsize=(8, 8))
 
-btns_frame = Frame(win, width=312, height=272.5, bg="grey")
+# convert column names into a list
+categories = list(music_feature.columns)
+# number of categories
+N = len(categories)
 
-btns_frame.pack()
+# create a list with the average of all features
+value = list(music_feature.mean())
 
-# first row
+# repeat first value to close the circle
+# the plot is a circle, so we need to "complete the loop"
+# and append the start value to the end.
+value += value[:1]
+# calculate angle for each category
+angles = [n / float(N) * 2 * math.pi for n in range(N)]
+angles += angles[:1]
 
-clear = Button(btns_frame, text="C", fg="black", width=32, height=3, bd=0, bg="#eee", cursor="hand2",
-               command=lambda: bt_clear()).grid(row=0, column=0, columnspan=3, padx=1, pady=1)
+# plot
+plt.polar(angles, value)
+plt.fill(angles, value, alpha=0.3)
 
-divide = Button(btns_frame, text="/", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-                command=lambda: btn_click("/")).grid(row=0, column=3, padx=1, pady=1)
+# plt.title('Discovery Weekly Songs Audio Features', size=35)
 
-# second row
-
-seven = Button(btns_frame, text="7", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-               command=lambda: btn_click(7)).grid(row=1, column=0, padx=1, pady=1)
-
-eight = Button(btns_frame, text="8", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-               command=lambda: btn_click(8)).grid(row=1, column=1, padx=1, pady=1)
-
-nine = Button(btns_frame, text="9", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-              command=lambda: btn_click(9)).grid(row=1, column=2, padx=1, pady=1)
-
-multiply = Button(btns_frame, text="*", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-                  command=lambda: btn_click("*")).grid(row=1, column=3, padx=1, pady=1)
-
-# third row
-
-four = Button(btns_frame, text="4", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-              command=lambda: btn_click(4)).grid(row=2, column=0, padx=1, pady=1)
-
-five = Button(btns_frame, text="5", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-              command=lambda: btn_click(5)).grid(row=2, column=1, padx=1, pady=1)
-
-six = Button(btns_frame, text="6", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-             command=lambda: btn_click(6)).grid(row=2, column=2, padx=1, pady=1)
-
-minus = Button(btns_frame, text="-", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-               command=lambda: btn_click("-")).grid(row=2, column=3, padx=1, pady=1)
-
-# fourth row
-
-one = Button(btns_frame, text="1", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-             command=lambda: btn_click(1)).grid(row=3, column=0, padx=1, pady=1)
-
-two = Button(btns_frame, text="2", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-             command=lambda: btn_click(2)).grid(row=3, column=1, padx=1, pady=1)
-
-three = Button(btns_frame, text="3", fg="black", width=10, height=3, bd=0, bg="#fff", cursor="hand2",
-               command=lambda: btn_click(3)).grid(row=3, column=2, padx=1, pady=1)
-
-plus = Button(btns_frame, text="+", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-              command=lambda: btn_click("+")).grid(row=3, column=3, padx=1, pady=1)
-
-# fourth row
-
-zero = Button(btns_frame, text="0", fg="black", width=21, height=3, bd=0, bg="#fff", cursor="hand2",
-              command=lambda: btn_click(0)).grid(row=4, column=0, columnspan=2, padx=1, pady=1)
-
-point = Button(btns_frame, text=".", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-               command=lambda: btn_click(".")).grid(row=4, column=2, padx=1, pady=1)
-
-equals = Button(btns_frame, text="=", fg="black", width=10, height=3, bd=0, bg="#eee", cursor="hand2",
-                command=lambda: bt_equal()).grid(row=4, column=3, padx=1, pady=1)
-
-win.mainloop()
+plt.xticks(angles[:-1], categories, size=15)
+plt.yticks(color='grey', size=15)
+plt.show()
