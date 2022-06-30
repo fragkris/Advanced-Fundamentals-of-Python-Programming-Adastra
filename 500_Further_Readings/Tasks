@@ -10,3 +10,7 @@ music you are listening to.
 - Understand how to retrieve your client id and client secret from Spotify's developer's webpage.
 - Select a playlist from your library and analyze it.
 - Use MatplotLib to create a visual diagram of the selected playlist.
+
+Use these articles to help you "understand" music:
+https://towardsdatascience.com/what-makes-a-song-likeable-dbfdb7abe404
+https://rpubs.com/PeterDola/SpotifyTracks

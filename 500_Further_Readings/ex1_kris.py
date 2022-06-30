@@ -14,54 +14,44 @@ import math
 client_id = '6386b9851ba1422d986d0679664b823e'  # insert your client id
 client_secret = '4082e30c07924dd68dc284dec52c3e4a'  # insert your client secret id here
 
-client_credentials_manager = SpotifyClientCredentials(client_id, client_secret)
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+auth_manager = SpotifyClientCredentials(client_id, client_secret)
+sptfy = spotipy.Spotify(client_credentials_manager=auth_manager)
 
 playlist_id = 'spotify:playlist:37i9dQZEVXcVCRUrQ42Ej9'  # insert your playlist id
-results = sp.playlist(playlist_id)
+results = sptfy.playlist(playlist_id)
 
 # create a list of song ids
-ids = []
+song_ids = []
 
 for item in results['tracks']['items']:
     track = item['track']['id']
-    ids.append(track)
+    song_ids.append(track)
 
-song_meta = {'id': [], 'album': [], 'name': [],
-             'artist': [], 'explicit': [], 'popularity': []}
+song_data = {'id': [], 'album': [], 'name': [],
+             'artist': [], 'popularity': []}
 
-for song_id in ids:
-    # get song's meta data
-    meta = sp.track(song_id)
+for song_id in song_ids:
+    meta = sptfy.track(song_id)  # get song's meta data
+    song_data['id'].append(song_id)  # song id
 
-    # song id
-    song_meta['id'].append(song_id)
+    album = meta['album']['name']  # album name
+    song_data['album'] += [album]
 
-    # album name
-    album = meta['album']['name']
-    song_meta['album'] += [album]
+    song = meta['name']  # song name
+    song_data['name'] += [song]
 
-    # song name
-    song = meta['name']
-    song_meta['name'] += [song]
-
-    # artists name
-    s = ', '
-    artist = s.join([singer_name['name'] for singer_name in meta['artists']])
-    song_meta['artist'] += [artist]
-
-    # explicit: lyrics could be considered offensive or unsuitable for children
-    explicit = meta['explicit']
-    song_meta['explicit'].append(explicit)
+    separator = ', '
+    artist = separator.join([singer_name['name'] for singer_name in meta['artists']])  # artists name
+    song_data['artist'] += [artist]
 
     # song popularity
     popularity = meta['popularity']
-    song_meta['popularity'].append(popularity)
+    song_data['popularity'].append(popularity)
 
-song_meta_df = pd.DataFrame.from_dict(song_meta)
+song_meta_df = pd.DataFrame.from_dict(song_data)
 
 # check the song feature
-features = sp.audio_features(song_meta['id'])
+features = sptfy.audio_features(song_data['id'])
 # change dictionary to dataframe
 features_df = pd.DataFrame.from_dict(features)
 
@@ -69,12 +59,12 @@ features_df = pd.DataFrame.from_dict(features)
 # duration_ms: The duration of the track in milliseconds.
 # 1 minute = 60 seconds = 60 × 1000 milliseconds = 60,000 ms
 features_df['duration_ms'] = features_df['duration_ms'] / 60000
-
-# combine two dataframe
 final_df = song_meta_df.merge(features_df)
-# print(final_df)
 
-music_feature = features_df[['danceability', 'energy', 'loudness', 'speechiness', 'tempo', 'duration_ms']]
+#print(final_df)
+
+music_feature = features_df[['danceability', 'energy', 'loudness', 'speechiness', 'valence',
+                             'tempo', 'duration_ms', 'acousticness', 'liveness', 'instrumentalness']]
 
 # Normalization - transfrom values in the range 0-1
 min_max_scaler = MinMaxScaler()
