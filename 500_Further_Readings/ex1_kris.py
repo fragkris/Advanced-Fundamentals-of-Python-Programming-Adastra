@@ -11,8 +11,8 @@ from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 import math
 
-client_id = '6386b9851ba1422d986d0679664b823e'  # insert your client id
-client_secret = '4082e30c07924dd68dc284dec52c3e4a'  # insert your client secret id here
+client_id = ''  # insert your client id
+client_secret = ''  # insert your client secret id here
 
 auth_manager = SpotifyClientCredentials(client_id, client_secret)
 sptfy = spotipy.Spotify(client_credentials_manager=auth_manager)
